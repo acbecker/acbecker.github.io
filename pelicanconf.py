@@ -54,13 +54,10 @@ THEME = '/astro/store/shared-scratch1/acbecker/LSST/lsst_devel/pelican-octopress
 
 # static files to copy into root, very useful for robots.txt
 #FILES_TO_COPY = (
+#   ('extra/_config.yml', '_config.yml'),
 #   ('extra/robots.txt', 'robots.txt'),
 #   ('extra/humans.txt', 'humans.txt'),
 #)
-
-# directories to be copied into output/static/
-STATIC_OUT_DIR = ''
-STATIC_PATHS = ['images', 'css', 'js']
 
 # very useful for debugging purposes
 DELETE_OUTPUT_DIRECTORY = True
@@ -97,7 +94,18 @@ TWITTER_SHOW_FOLLOWER_COUNT = 'true'
 #    {{ EXTRA_HEADER }}
 #  {% endif %}
 # Not sure if this actually did anything tho...
+
+# Actually, it appears to have included the EXTRA_HEADER again.  So
+# let me just remove this from base.html, looks like this include
+# functionality is already in there...
 EXTRA_HEADER = open('_nb_header_mod.html').read().decode('utf-8')
 
 # Trying to get the Category panel off the RHS, no effect.
 CATEGORY_SAVE_AS = False
+
+STATIC_PATHS = [
+    'extra/_config.yml',
+    ]
+EXTRA_PATH_METADATA = {
+    'extra/_config.yml': {'path': '_config.yml'},
+    }
