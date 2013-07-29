@@ -87,8 +87,12 @@ ftp_upload: publish
 s3_upload: publish
 	s3cmd sync $(OUTPUTDIR)/ s3://$(S3_BUCKET) --acl-public --delete-removed
 
-github: publish
+oldgithub: publish
 	ghp-import $(OUTPUTDIR)
 	git push origin gh-pages
+
+github: publish
+	ghp-import $(OUTPUTDIR) -b master
+	git push origin master
 
 .PHONY: html help clean regenerate serve devserver publish ssh_upload rsync_upload dropbox_upload ftp_upload s3_upload github
