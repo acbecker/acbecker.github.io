@@ -55,14 +55,15 @@ odds can't be calculated, and while this might be technically true
 tournament correctly, one would ideally like many realizations of all
 possible scenarios, to understand what fraction of the time the one
 particular scenario of interest played out.  This is of course
-impossible until we are able to access all levels of our Level-III
-&lt;a href="http://en.wikipedia.org/wiki/Multiverse"&gt;multiverse&lt;/a&gt;, including the
-issue that there are 9.2 billion billion ways a single tournament in
-our Universe could unfold.  So we take one step in a data-driven look
-at this problem, which is to calculate the average odds $O$ that the
-favored team beats the underdog.  This is a "best case scenario", in
-the sense that one could pick the next round of a bracket after each
-previous one, picking only the higher seed of the two.&lt;/p&gt;
+impossible without the assistance of a Level-III
+&lt;a href="http://en.wikipedia.org/wiki/Multiverse"&gt;multiverse&lt;/a&gt;, let alone that
+there are 9.2 billion billion ways a single tournament in our Universe
+could unfold.  So we take one step in a data-driven look at this
+problem, which is to calculate the average odds $O$ that the favored
+team beats the underdog.  This is somewhat of a "best case scenario",
+in the sense that one could pick the next round of a bracket after
+each previous one, picking only the higher seed of the two competitors
+for any given game.&lt;/p&gt;
 &lt;p&gt;As a caveat, this is a very coarse parameterization of our ignorance of
 just how the NCAA seeding rules create matchups that are able to be
 predicted.  An additional complication is that the seeding rules yield
@@ -75,7 +76,7 @@ alludes to in the WSJ article.&lt;/p&gt;
 a list of all the matchups in the NCAA basketball tournaments going
 back to 1985.  From here it was a trivial computation to determine
 what fraction of higher-seeded teams typically won.  Since there are 4
-teams in each tournament with a given seed, I have ignored all
+teams in each tournament with a given numerical seed, I have ignored all
 competitions where equal-numbered seeds went against each other.&lt;/p&gt;
 &lt;h2&gt;Results&lt;/h2&gt;
 &lt;p&gt;I first split the data up into the 6 rounds: "First Round", "Second Round", "Sweet 16", "Elite Eight", "Final Four", "National Championship".
@@ -131,7 +132,7 @@ from the second round on, the higher seed was actually outplayed by
 the lesser seeds in each and every round.  Now, this analysis does
 &lt;em&gt;not&lt;/em&gt; take into account e.g. a particularly outstanding lower seed
 that left a trail of correlated destruction in their wake (e.g. George
-Mason, 2006).  But it is overall surprising (to this author), and
+Mason, 2006).  But it is overall surprising to this author, and
 suggests that after the first round, gamers should prefer the
 underdogs, who win 63% of their contests.  For the overall numbers,
 the higher seeds win 56% of their games, due to the large numbers of
@@ -146,10 +147,10 @@ tournament, slightly better than the 1-in-9.2 billion billion
 suggested by the coin-flip odds.  However, this probably suffers from
 the process of "overfitting" where we have subdivided the data too
 finely (e.g. per round) and end up multiplying together a bunch of
-noisy, uncertain values.  If we instead use the average odds of 0.56
-for the higher seed to win, we find a much more favorable scenario, a
-1-in-7 million billion chance of the desired outcome, or more than 200
-times better than the previous estimate.  &lt;/p&gt;
+noisy, uncertain values.  If we instead use the overall average odds
+of 0.56 for the higher seed to win, we find a much more favorable
+scenario, a 1-in-7 million billion chance of the desired outcome, or
+more than 200 times better than the previous estimate.&lt;/p&gt;
 &lt;p&gt;No matter how you slice it, given the data on-hand, the likelihood of
 picking a tournament correctly is exceedingly miniscule.  Even if you
 were able to interactively pick your bracket after each round, and
@@ -160,9 +161,9 @@ And the $\$11$ million premium being paid to insure the money?  This
 is about 1% of the total prize; if the odds of winning the prize were
 1 in 100, this might seem like the appropriate level to insure the
 kitty.  However, given the odds, the appropriate level of insurance
-should be at most one 7-millionth of a dollar, something out of the
+should be at most one 7-millionth of a dollar, or something out of the
 archives of Zimbabwean
 &lt;a href="http://en.wikipedia.org/wiki/Zimbabwean_dollar"&gt;currency&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Bottom line, this is great bet for Berkshire Hathaway to make, and
 unnecessary insurance for the sponsor of the competition.  It is,
-however, good PR, as any readership of this blog demonstrates.&lt;/p&gt;</summary></entry></feed>
+however, good PR for all involved.&lt;/p&gt;</summary></entry></feed>
