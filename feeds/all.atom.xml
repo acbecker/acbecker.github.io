@@ -107,63 +107,54 @@ The fraction of top seeded teams that won in each round are listed below:&lt;/p&
         &lt;td&gt;  Number won by higher seed &lt;/td&gt;
         &lt;td&gt;                     &lt;/td&gt;
         &lt;td&gt;  693 &lt;/td&gt;
-        &lt;td&gt;  141 &lt;/td&gt;
-        &lt;td&gt;  105 &lt;/td&gt;
-        &lt;td&gt;  55  &lt;/td&gt;
-        &lt;td&gt;  10  &lt;/td&gt;
-        &lt;td&gt;  8   &lt;/td&gt;
+        &lt;td&gt;  327 &lt;/td&gt;
+        &lt;td&gt;  166 &lt;/td&gt;
+        &lt;td&gt;  66  &lt;/td&gt;
+        &lt;td&gt;  28  &lt;/td&gt;
+        &lt;td&gt;  17  &lt;/td&gt;
     &lt;/tr&gt;
     &lt;tr&gt;
         &lt;td&gt;  Fraction won by higher seed &lt;/td&gt;
         &lt;td&gt;                     &lt;/td&gt;
         &lt;td&gt;  75% &lt;/td&gt;
-        &lt;td&gt;  30% &lt;/td&gt;
-        &lt;td&gt;  45% &lt;/td&gt;
-        &lt;td&gt;  47% &lt;/td&gt;
-        &lt;td&gt;  23% &lt;/td&gt;
-        &lt;td&gt;  35% &lt;/td&gt;
+        &lt;td&gt;  70% &lt;/td&gt;
+        &lt;td&gt;  72% &lt;/td&gt;
+        &lt;td&gt;  57% &lt;/td&gt;
+        &lt;td&gt;  65% &lt;/td&gt;
+        &lt;td&gt;  74% &lt;/td&gt;
     &lt;/tr&gt;
 &lt;/table&gt;
 &lt;/div&gt;
 
 &lt;p&gt;As expected, the higher ranked seed performed exceptionally well in
-the first round, winning approximately 75% of their games.  However,
-from the second round on, the higher seed was actually outplayed by
-the lesser seeds in each and every round.  Now, this analysis does
-&lt;em&gt;not&lt;/em&gt; take into account e.g. a particularly outstanding lower seed
-that left a trail of correlated destruction in their wake (e.g. George
-Mason, 2006).  But it is overall surprising to this author, and
-suggests that after the first round, gamers should prefer the
-underdogs, who win 63% of their contests.  For the overall numbers,
-the higher seeds win 56% of their games, due to the large numbers of
-games in the first round, where the higher seeds dominate.&lt;/p&gt;
+the first round, winning approximately 75% of their games.  From the
+second round on, this advantage is somewhat lessened, but there are
+also fewer games in the sample.  Note, this analysis does &lt;em&gt;not&lt;/em&gt; take
+into account e.g. a particularly outstanding lower seed that left a
+trail of correlated destruction in their wake (e.g. George Mason,
+2006).  For the overall numbers, the higher seeds win 72% of their
+games.&lt;/p&gt;
 &lt;p&gt;So how does this wrap into the bracket contest above?  We may proceed
 in 2 ways: use a likelihood of 0.75 for all 32 "First Round" games,
-0.30 for all 16 "Second Round" games, 0.45 for 8 "Sweet 16" games,
-0.46 for 4 "Elite Eight" games, 0.23 for 2 "Final Four" games, and
-0.35 for 1 the Championship Game.  This yields a 1-in-2 billion
-billion chance that the higher ranked team wins every game in the NCAA
-tournament, slightly better than the 1-in-9.2 billion billion
-suggested by the coin-flip odds.  However, this probably suffers from
-the process of "overfitting" where we have subdivided the data too
-finely (e.g. per round) and end up multiplying together a bunch of
-noisy, uncertain values.  If we instead use the overall average odds
-of 0.56 for the higher seed to win, we find a much more favorable
-scenario, a 1-in-7 million billion chance of the desired outcome, or
-more than 200 times better than the previous estimate.&lt;/p&gt;
+0.70 for all 16 "Second Round" games, 0.72 for 8 "Sweet 16" games,
+0.57 for 4 "Elite Eight" games, 0.65 for 2 "Final Four" games, and
+0.74 for 1 the Championship Game.  This yields a 1-in-1.2 billion
+chance that the higher ranked team wins every game in the NCAA
+tournament.  However, this potentially suffers from the process of
+"overfitting" where we have subdivided the data too finely (e.g. per
+round) and end up multiplying together a bunch of noisy, uncertain
+values.  If we instead use the overall average odds of 0.72 for the
+higher seed to win, we find a much more favorable scenario, a slightly
+better than 1-in-1 billion chance of the desired outcome.&lt;/p&gt;
 &lt;p&gt;No matter how you slice it, given the data on-hand, the likelihood of
-picking a tournament correctly is exceedingly miniscule.  Even if you
+picking a tournament correctly is exceedingly miniscule.  Only if you
 were able to interactively pick your bracket after each round, and
-only chose the favorites in each and every game, and ended up winning
-it all, you would still be getting underpaid on your $\$1$ billion
-dollar reward by more than $\$7$ million per dollar in that billion.
+only chose the favorites in each and every game, would you have a
+1-in-a billion chance to win $\$1$ billion dollars.  Which is not too shabby.
 And the $\$11$ million premium being paid to insure the money?  This
 is about 1% of the total prize; if the odds of winning the prize were
 1 in 100, this might seem like the appropriate level to insure the
-kitty.  However, given the odds, the appropriate level of insurance
-should be at most one 7-millionth of a dollar, or something out of the
-archives of Zimbabwean
-&lt;a href="http://en.wikipedia.org/wiki/Zimbabwean_dollar"&gt;currency&lt;/a&gt;.&lt;/p&gt;
+kitty.  &lt;/p&gt;
 &lt;p&gt;Bottom line, this is great bet for Berkshire Hathaway to make, and
 unnecessary insurance for the sponsor of the competition.  It is,
 however, good PR for all involved.&lt;/p&gt;</summary></entry></feed>

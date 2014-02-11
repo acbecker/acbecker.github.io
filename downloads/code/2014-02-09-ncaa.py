@@ -63,8 +63,6 @@ class MyHTMLParser(HTMLParser):
         
         HTMLParser.feed(self, data)
         self.doreset() # Get the last score in there
-        import pdb; pdb.set_trace()
-        self.parseByYear()
         self.parseByRound()
         self.parseAll()
 
@@ -104,27 +102,16 @@ class MyHTMLParser(HTMLParser):
         for year in years:
             for round in self.counter[year]:
                 for matchup in self.counter[year][round]:
-                    res = self.domatchup(matchup)
-                    if res == -1:
+                    (rank1, rank2), (score1, score2) = matchup
+                    if rank1 == rank2:
                         continue
+                    if rank1 < rank2 and score1 > score2:
+                        nfav += 1
+                    elif rank2 < rank1 and score2 > score1:
+                        nfav += 1
                     ntot += 1
-                    nfav += res
-        print "ALL", ntot, nfav, 1.0 * nfav / ntot
 
-    def parseByYear(self):
-        years = self.counter.keys()
-        years.sort()
-        for year in years:
-            ntot = 0
-            nfav = 0
-            for round in self.counter[year]:
-                for matchup in self.counter[year][round]:
-                    res = self.domatchup(matchup)
-                    if res == -1:
-                        continue
-                    ntot += 1
-                    nfav += res
-            print year, ntot, nfav, 1.0 * nfav / ntot
+        print "ALL", ntot, nfav, 1.0 * nfav / ntot
 
     def parseByRound(self):
         years = self.counter.keys()
@@ -134,11 +121,15 @@ class MyHTMLParser(HTMLParser):
             nfav = 0
             for year in years:
                 for matchup in self.counter[year][round]:
-                    res = self.domatchup(matchup)
-                    if res == -1:
+                    (rank1, rank2), (score1, score2) = matchup
+                    if rank1 == rank2:
                         continue
+                    if rank1 < rank2 and score1 > score2:
+                        nfav += 1
+                    elif rank2 < rank1 and score2 > score1:
+                        nfav += 1
                     ntot += 1
-                    nfav += res
+                    
             print round, ntot, nfav, 1.0 * nfav / ntot
             
 # instantiate the parser and fed it some HTML
