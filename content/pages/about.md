@@ -5,9 +5,9 @@ Slug: about
 Author: Andrew Becker
 Summary: About this blog
 
-I'd like to use this blog as a vehicle for my thoughts on experiences
-cognitive and creative.  Putting myself out there, as it were.
-Sometimes out there will be "out there".  So be it.
+I'd like to use this blog as a vehicle to share my cognitive and
+creative thoughts.  Putting myself out there, as it were.  Sometimes
+out there will be "out there".  So be it.
 
 There are three things that finally compelled me to put this all
 together.  The first are remembered words of 
@@ -30,7 +30,7 @@ there."  This is the world I want to live in, and to be a part of.
 
 Finally, the realization that in this 21st century, if you're not out
 in it, you're at a disadvantage.  This is a time of massive
-technological change, a grand opportunity, once in a lifetime or even
+technological change, a grand opportunity, once in a lifetime, or even
 rarer.  Not just for industry, art, and science but for communication,
 the exchange of ideas, and the generation of new ones.  I have
 [several](http://rameznaam.com/)
@@ -43,4 +43,3 @@ accomplished.
 
 Writing the code to make the future happen is not enough; you have to
 represent it.  Which is what I intend to do here as best I can.
-
