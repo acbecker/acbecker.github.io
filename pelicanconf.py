@@ -1,16 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
-from __future__ import unicode_literals
+import os
 
 AUTHOR = u'Andrew Becker'
-SITENAME = u'acbecker.github.io'
-SITESUBTITLE = u"Astrophysics, Statistics, and Computer Science"
+SITENAME = u'Put Yourself Out There'
+SITESUBTITLE = u"Reports from the front on Astrophysics, Statistics, and Data Science"
 SITEURL = '' # change in publishconf.py
 
 # RSS/Atom feeds
 FEED_DOMAIN = SITEURL
 FEED_ATOM = 'atom.xml'
-
 
 # Times and dates
 #DEFAULT_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S"
@@ -45,12 +44,13 @@ SOCIAL = (#('<i class="icon-rss"></i> RSS', "%s/%s" % (FEED_DOMAIN, FEED_ATOM)),
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
-#RELATIVE_URLS = True
+RELATIVE_URLS = True
 
 # intalled
 #THEME = 'notmyidea'
 # local
-THEME = '/astro/store/shared-scratch1/acbecker/LSST/lsst_devel/pelican-octopress-theme'
+# https://github.com/duilio/pelican-octopress-theme.git
+THEME = os.path.join(os.path.dirname(os.path.realpath(__file__)), "configuration/pelican-octopress-theme")
 
 # static files to copy into root, very useful for robots.txt
 #FILES_TO_COPY = (
@@ -62,11 +62,14 @@ THEME = '/astro/store/shared-scratch1/acbecker/LSST/lsst_devel/pelican-octopress
 # very useful for debugging purposes
 DELETE_OUTPUT_DIRECTORY = True
 
+
+# Set the article URL
 ARTICLE_URL = 'blog/{date:%Y}/{date:%m}/{date:%d}/{slug}/'
 ARTICLE_SAVE_AS = 'blog/{date:%Y}/{date:%m}/{date:%d}/{slug}/index.html'
 
-PLUGIN_PATH = '/astro/store/shared-scratch1/acbecker/LSST/lsst_devel/pelican-plugins'
-PLUGINS = []
+# https://github.com/getpelican/pelican-plugins
+PLUGIN_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "configuration/pelican-plugins")
+PLUGINS = ['summary', 'latex'] # 'liquid_tags.img', 'liquid_tags.video', 'liquid_tags.include_code', 'liquid_tags.notebook', 'liquid_tags.literal']
 
 # publishconf.py
 ## to get comments, etc
@@ -98,14 +101,26 @@ TWITTER_SHOW_FOLLOWER_COUNT = 'true'
 # Actually, it appears to have included the EXTRA_HEADER again.  So
 # let me just remove this from base.html, looks like this include
 # functionality is already in there...
-EXTRA_HEADER = open('_nb_header_mod.html').read().decode('utf-8')
+if not os.path.exists('_nb_header.html'):
+    import warnings
+    warnings.warn("_nb_header.html not found. "
+                  "Rerun make html to finalize build.")
+else:
+    EXTRA_HEADER = open('_nb_header.html').read().decode('utf-8')
 
 # Trying to get the Category panel off the RHS, no effect.
 CATEGORY_SAVE_AS = False
 
-STATIC_PATHS = [
-    'extra/_config.yml',
-    ]
+STATIC_PATHS = ['images', 'figures', 'downloads', 'favicon.png']
+#STATIC_PATHS = [ 'extra/_config.yml', ]
+
 EXTRA_PATH_METADATA = {
     'extra/_config.yml': {'path': '_config.yml'},
     }
+
+CODE_DIR = 'downloads/code'
+NOTEBOOK_DIR = 'downloads/notebooks'
+SEARCH_BOX = True
+
+DISPLAY_CATEGORIES_ON_MENU = False
+DEFAULT_CATEGORY = ""
