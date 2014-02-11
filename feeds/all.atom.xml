@@ -1,3 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>acbecker.github.io</title><link href="http://acbecker.github.io/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>http://acbecker.github.io/</id><updated>2013-07-26T00:00:00-07:00</updated><entry><title>Introduction</title><link href="http://acbecker.github.io/blog/2013/07/26/intro/" rel="alternate"></link><updated>2013-07-26T00:00:00-07:00</updated><author><name>Andrew Becker</name></author><id>tag:acbecker.github.io,2013-07-26:blog/2013/07/26/intro/</id><summary type="html">&lt;p&gt;Hi y'all, this is my first official blog.&lt;/p&gt;
-&lt;p&gt;Designed in &lt;a href="http://blog.getpelican.com/"&gt;Pelican&lt;/a&gt; with open-source assitance from &lt;a href="http://jakevdp.github.io"&gt;jakevdp&lt;/a&gt; and &lt;a href="http://themodernscientist.com"&gt;themodernscientist&lt;/a&gt;&lt;/p&gt;</summary><category term="Python"></category><category term="Blogging"></category></entry></feed>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Put Yourself Out There</title><link href="http://acbecker.github.io/" rel="alternate"></link><link href="/feeds/all.atom.xml" rel="self"></link><id>http://acbecker.github.io/</id><updated>2014-02-10T10:58:00-08:00</updated><entry><title>Odds of Correctly Predicting the NCAA Basketball Tournament</title><link href="http://acbecker.github.io/blog/2014/02/10/ncaa/" rel="alternate"></link><updated>2014-02-10T10:58:00-08:00</updated><author><name>Andrew Becker</name></author><id>tag:acbecker.github.io,2014-02-10:blog/2014/02/10/ncaa/</id><summary type="html">&lt;hr /&gt;
+
+
+&lt;p&gt;I was briefly interviewed for a 
+&lt;a href="http://online.wsj.com/news/articles/SB10001424052702304450904579367153999135482?mod=Business_newsreel_3"&gt;Wall Street Journal&lt;/a&gt;
+article on Warren Buffett's insuring of a $\$1$ billion dollar prize for
+any contestant who correctly picks all 63 games in the 2013 NCAA
+basketball tournament (see also
+&lt;a href="http://www.marketwatch.com/story/yahoo-warren-buffett-and-a-1-billion-contest-2014-02-09-194491044"&gt;here&lt;/a&gt;).  Don't ask
+how this happened; it involves consorting with a bunch of degenerates.  As stated in the 
+article, "Mr. Buffett's Berkshire Hathaway would take on the risk, and earn a fee for doing so".  My position
+as stated in the article is that this paid premium to Berkshire Hathaway was unnecessary, since the odds of picking the outcome of these 63 games
+correctly is so unlikely.  A great deal for Mr. Buffett, but that is indeed his reputation.  I expand on these thoughts below.
+&lt;/p&gt;
+&lt;p&gt;Naively, the odds of picking 63 games correctly are as follows.  If
+the outcome of a single game was random, the odds of either team
+winning (or of correctly picking the winner) would be 1 in 2, or 50%.
+The odds of anyone picking the correct outcome of 2 games (team A vs
+team B; and team C vs team D) are 1 in 4 (either A and C win; A and D
+win; B and C win; or B and D win), or 25%.  A pattern quickly emerges:
+the chance of picking $N$ games correctly goes like $1/2^N$.  This
+generalizes even further: assuming odds $O$ of any particular choice
+being correct (which is 50%, or 0.5, above), the likelihood of picking
+$N$ games correct is $O^N$.  Naively assuming odds of 0.5 for each of
+63 games in the tournament, the chances of getting them all correct is
+$0.5^{63} = 1.1 \times 10^{-19}$, roughly 1-to-$9.2 \times
+10^{18}$, or 9.2 billion billion.  This is also approximately the
+number of grains of
+&lt;a href="http://www.npr.org/blogs/krulwich/2012/09/17/161096233/which-is-greater-the-number-of-sand-grains-on-earth-or-stars-in-the-sky"&gt;sand&lt;/a&gt;
+on the entire planet Earth.  &lt;strong&gt;Such is the power of exponential growth&lt;/strong&gt;,
+that you can double something, double it again, and by doing this 63
+times you have an entire planet's worth of material.  This process is not
+unlike the growth in technology we currently find ourselves in the
+midst of, where computing power is basically doubling every 18-24
+&lt;a href="http://en.wikipedia.org/wiki/Moore%27s_law"&gt;months&lt;/a&gt;.  A quick
+computation suggests that we are around 20 doublings into this process.&lt;/p&gt;
+&lt;p&gt;So in this ideal world, $\$9.2$ billion billion this should be the
+monetary payout for correctly calling all 63 games of the NCAA
+tournament, not a mere $\$1$ billion.  To think about this another
+way, each dollar in that $\$1$ billion payout should itself be worth
+$\$9.2$ billion.  The &lt;a href="http://en.wikipedia.org/wiki/Vigorish"&gt;vig&lt;/a&gt; on
+this bet is enormous, perhaps unprecedented.&lt;/p&gt;
+&lt;p&gt;Now, the above assumes that the outcome of each game is basically a coin
+flip.  But we know this to &lt;strong&gt;not&lt;/strong&gt; be the case.  Teams are seeded
+based on (among other considerations) their perceived strength, from 1
+to 16, with #1 seeds expected to proceed farther into the tournament
+than #16 seeds.  In addition, the first and sixteen seeds play each
+other in the first round of the tournament, so this is not nearly a
+coin flip.  In the WSJ article, Mr, Buffett is quoted as saying the
+odds can't be calculated, and while this might be technically true
+(no-one can predict the future), they can be estimated.  &lt;/p&gt;
+&lt;h2&gt;Estimating The Odds&lt;/h2&gt;
+&lt;p&gt;To understand the true odds of calculating all 63 games of a NCAA
+tournament correctly, one would ideally like many realizations of all
+possible scenarios, to understand what fraction of the time the one
+particular scenario of interest played out.  This is of course
+impossible until we are able to access all levels of our Level-III
+&lt;a href="http://en.wikipedia.org/wiki/Multiverse"&gt;multiverse&lt;/a&gt;, including the
+issue that there are 9.2 billion billion ways a single tournament in
+our Universe could unfold.  So we take one step in a data-driven look
+at this problem, which is to calculate the average odds $O$ that the
+favored team beats the underdog.  This is a "best case scenario", in
+the sense that one could pick the next round of a bracket after each
+previous one, picking only the higher seed of the two.&lt;/p&gt;
+&lt;p&gt;As a caveat, this is a very coarse parameterization of our ignorance of
+just how the NCAA seeding rules create matchups that are able to be
+predicted.  An additional complication is that the seeding rules yield
+different teams in a given seed each year.  And each of these teams
+will have in general different players and perhaps even coaches than
+its previous entry.  This is the system complexity that Mr. Buffett
+alludes to in the WSJ article.&lt;/p&gt;
+&lt;p&gt;To start this investigation, I obtained
+&lt;a href="http://apps.washingtonpost.com/sports/apps/live-updating-mens-ncaa-basketball-bracket/search/?pri_school_id=&amp;amp;pri_conference=&amp;amp;pri_coach=&amp;amp;pri_seed_from=1&amp;amp;pri_seed_to=16&amp;amp;pri_power_conference=&amp;amp;pri_bid_type=&amp;amp;opp_school_id=&amp;amp;opp_conference=&amp;amp;opp_coach=&amp;amp;opp_seed_from=1&amp;amp;opp_seed_to=16&amp;amp;opp_power_conference=&amp;amp;opp_bid_type=&amp;amp;game_type=7&amp;amp;from=1985&amp;amp;to=2013&amp;amp;submit="&gt;here&lt;/a&gt;
+a list of all the matchups in the NCAA basketball tournaments going
+back to 1985.  From here it was a trivial computation to determine
+what fraction of higher-seeded teams typically won.  Since there are 4
+teams in each tournament with a given seed, I have ignored all
+competitions where equal-numbered seeds went against each other.&lt;/p&gt;
+&lt;h2&gt;Results&lt;/h2&gt;
+&lt;p&gt;I first split the data up into the 6 rounds: "First Round", "Second Round", "Sweet 16", "Elite Eight", "Final Four", "National Championship".
+The fraction of top seeded teams that won in each round are listed below:&lt;/p&gt;
+&lt;div class="CSSTableGenerator" &gt;
+&lt;table &gt;
+    &lt;tr&gt;
+        &lt;td&gt;  Value                 &lt;/td&gt;
+        &lt;td&gt;                        &lt;/td&gt;
+        &lt;td&gt;  First Round           &lt;/td&gt;
+        &lt;td&gt;  Second Round          &lt;/td&gt;
+        &lt;td&gt;  Sweet 16              &lt;/td&gt;
+        &lt;td&gt;  Elite Eight           &lt;/td&gt;
+        &lt;td&gt;  Final Four            &lt;/td&gt;
+        &lt;td&gt;  National Championship &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;  Total number of games &lt;/td&gt;
+        &lt;td&gt;                        &lt;/td&gt;
+        &lt;td&gt;  928  &lt;/td&gt;
+        &lt;td&gt;  464  &lt;/td&gt;
+        &lt;td&gt;  232 &lt;/td&gt;
+        &lt;td&gt;  116 &lt;/td&gt;
+        &lt;td&gt;  43  &lt;/td&gt;
+        &lt;td&gt;  23  &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;  Number won by higher seed &lt;/td&gt;
+        &lt;td&gt;                     &lt;/td&gt;
+        &lt;td&gt;  693 &lt;/td&gt;
+        &lt;td&gt;  141 &lt;/td&gt;
+        &lt;td&gt;  105 &lt;/td&gt;
+        &lt;td&gt;  55  &lt;/td&gt;
+        &lt;td&gt;  10  &lt;/td&gt;
+        &lt;td&gt;  8   &lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+        &lt;td&gt;  Fraction won by higher seed &lt;/td&gt;
+        &lt;td&gt;                     &lt;/td&gt;
+        &lt;td&gt;  75% &lt;/td&gt;
+        &lt;td&gt;  30% &lt;/td&gt;
+        &lt;td&gt;  45% &lt;/td&gt;
+        &lt;td&gt;  47% &lt;/td&gt;
+        &lt;td&gt;  23% &lt;/td&gt;
+        &lt;td&gt;  35% &lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As expected, the higher ranked seed performed exceptionally well in
+the first round, winning approximately 75% of their games.  However,
+from the second round on, the higher seed was actually outplayed by
+the lesser seeds in each and every round.  Now, this analysis does
+&lt;em&gt;not&lt;/em&gt; take into account e.g. a particularly outstanding lower seed
+that left a trail of correlated destruction in their wake (e.g. George
+Mason, 2006).  But it is overall surprising (to this author), and
+suggests that after the first round, gamers should prefer the
+underdogs, who win 63% of their contests.  For the overall numbers,
+the higher seeds win 56% of their games, due to the large numbers of
+games in the first round, where the higher seeds dominate.&lt;/p&gt;
+&lt;p&gt;So how does this wrap into the bracket contest above?  We may proceed
+in 2 ways: use a likelihood of 0.75 for all 32 "First Round" games,
+0.30 for all 16 "Second Round" games, 0.45 for 8 "Sweet 16" games,
+0.46 for 4 "Elite Eight" games, 0.23 for 2 "Final Four" games, and
+0.35 for 1 the Championship Game.  This yields a 1-in-2 billion
+billion chance that the higher ranked team wins every game in the NCAA
+tournament, slightly better than the 1-in-9.2 billion billion
+suggested by the coin-flip odds.  However, this probably suffers from
+the process of "overfitting" where we have subdivided the data too
+finely (e.g. per round) and end up multiplying together a bunch of
+noisy, uncertain values.  If we instead use the average odds of 0.56
+for the higher seed to win, we find a much more favorable scenario, a
+1-in-7 million billion chance of the desired outcome, or more than 200
+times better than the previous estimate.  &lt;/p&gt;
+&lt;p&gt;No matter how you slice it, given the data on-hand, the likelihood of
+picking a tournament correctly is exceedingly miniscule.  Even if you
+were able to interactively pick your bracket after each round, and
+only chose the favorites in each and every game, and ended up winning
+it all, you would still be getting underpaid on your $\$1$ billion
+dollar reward by more than $\$7$ million per dollar in that billion.
+And the $\$11$ million premium being paid to insure the money?  This
+is about 1% of the total prize; if the odds of winning the prize were
+1 in 100, this might seem like the appropriate level to insure the
+kitty.  However, given the odds, the appropriate level of insurance
+should be at most one 7-millionth of a dollar, something out of the
+archives of Zimbabwean
+&lt;a href="http://en.wikipedia.org/wiki/Zimbabwean_dollar"&gt;currency&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Bottom line, this is great bet for Berkshire Hathaway to make, and
+unnecessary insurance for the sponsor of the competition.  It is,
+however, good PR, as any readership of this blog demonstrates.&lt;/p&gt;</summary></entry></feed>
