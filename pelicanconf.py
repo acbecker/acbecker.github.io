@@ -52,16 +52,8 @@ RELATIVE_URLS = True
 # https://github.com/duilio/pelican-octopress-theme.git
 THEME = os.path.join(os.path.dirname(os.path.realpath(__file__)), "configuration/pelican-octopress-theme")
 
-# static files to copy into root, very useful for robots.txt
-#FILES_TO_COPY = (
-#   ('extra/_config.yml', '_config.yml'),
-#   ('extra/robots.txt', 'robots.txt'),
-#   ('extra/humans.txt', 'humans.txt'),
-#)
-
 # very useful for debugging purposes
 DELETE_OUTPUT_DIRECTORY = True
-
 
 # Set the article URL
 ARTICLE_URL = 'blog/{date:%Y}/{date:%m}/{date:%d}/{slug}/'
@@ -69,7 +61,7 @@ ARTICLE_SAVE_AS = 'blog/{date:%Y}/{date:%m}/{date:%d}/{slug}/index.html'
 
 # https://github.com/getpelican/pelican-plugins
 PLUGIN_PATH = os.path.join(os.path.dirname(os.path.realpath(__file__)), "configuration/pelican-plugins")
-PLUGINS = ['summary', 'latex'] # 'liquid_tags.img', 'liquid_tags.video', 'liquid_tags.include_code', 'liquid_tags.notebook', 'liquid_tags.literal']
+PLUGINS = ['summary', 'latex', 'liquid_tags.img', 'liquid_tags.video', 'liquid_tags.include_code', 'liquid_tags.notebook', 'liquid_tags.literal']
 
 # publishconf.py
 ## to get comments, etc
