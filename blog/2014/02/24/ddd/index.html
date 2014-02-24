@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Put Yourself Out There</title>
+  <title>Data Driven Discovery</title>
   <meta name="author" content="Andrew Becker">
 
   <link href="/atom.xml" type="application/atom+xml" rel="alternate"
@@ -1825,6 +1825,28 @@ init_mathjax();
         rel="stylesheet" type="text/css">
   <link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic"
         rel="stylesheet" type="text/css">
+    
+    <script type= "text/javascript">
+        var s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.src = 'https:' == document.location.protocol ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js' : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'; 
+        s[(window.opera ? "innerHTML" : "text")] =
+            "MathJax.Hub.Config({" + 
+            "    config: ['MMLorHTML.js']," + 
+            "    jax: ['input/TeX','input/MathML','output/HTML-CSS','output/NativeMML']," +
+            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," + 
+            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+            "    tex2jax: { " +
+            "        inlineMath: [ ['$','$'] ], " +
+            "        displayMath: [ ['$$','$$'] ]," +
+            "        processEscapes: true }, " +
+            "    'HTML-CSS': { " +
+            "        styles: { '.MathJax .mo, .MathJax .mi': {color: 'black ! important'}} " +
+            "    } " +
+            "}); ";
+        (document.body || document.getElementsByTagName('head')[0]).appendChild(s);
+    </script>
+
 </head>
 
 <body>
@@ -1852,9 +1874,49 @@ init_mathjax();
 </ul></nav>
   <div id="main">
     <div id="content">
-<ul>
-    <li><a href="http://acbecker.github.io/category/.html"></a></li>
-</ul>
+<div>
+  <article class="hentry" role="article">
+<header>
+      <h1 class="entry-title">Data Driven Discovery</h1>
+      <p class="meta"><time datetime="2014-02-24T12:50:00" pubdate>2014-02-24</time></p>
+</header>
+
+  <div class="entry-content"><hr />
+
+
+<p>I've just submitted a proposal to the Moore Foundation's Data Driven
+Discovery
+<a href="http://www.moore.org/programs/science/data-driven-discovery">Initiative</a>.
+This is the first of two rounds of the proposal process.  If selected,
+I would be awarded $1.5M over 5 years, which would be my biggest
+individual grant yet.  Read on for the core proposal idea...</p>
+
+
+<hr />
+<p>Astrophysics has been revolutionized by the development of science-grade digital imaging devices and by Moore’s progression of computing power. The former has enabled wide field imaging systems on large aperture telescopes, and the latter ensures their data can be gathered in volume and yet still analyzed in real-time. These advances have led to astronomical surveys characterized by successively more extreme combinations of depth, cadence, and sky coverage, challenging Astronomers to analyze ever larger data streams. The next generation of surveys are designed to concurrently address many of the outstanding issues in astrophysics, with answers hidden within multi-dimensional archives of data. Their core science goals include separating the novel from the prosaic, using time-series of information and modeling and classification of lightcurve features. However, <strong>the success of these surveys is not guaranteed</strong>, without advances in the tools to model and interpret their data.</p>
+<p><strong>Major Accomplishments</strong>: As faculty at the University of Washington, I have served as PI, Co-I and project manager of multiple successful grants from NASA and the NSF. I have been a strong advocate for and active participant in the open sharing of data and algorithms. From system administrator to PI, my immersion in time-domain astronomy has provided a detailed understand- ing of the mechanics behind large scale data acquisition and analysis. This work has helped me attain recognition as a world leader in time-domain science, with my software contributing to many of the novel astrophysical discoveries of the past decade, and in use by many of the current survey projects. This success is reflected in my citation record (in the top <a href="http://archive.sciencewatch.com/inter/aut/2010/10-may/10mayBeck/">1%</a> in the field of space sciences) and in my H-index of <a href="http://scholar.google.com/citations?hl=en&amp;user=OxatP8YAAAAJ">57</a>. And while many things have changed in the field since I first started, one thing has remained constant: the Universe always reveals itself through its variability.</p>
+<p>I have been actively involved in the field of time-domain astrophysics since joining the MACHO project in 1995. MACHO utilized one of the first large-format CCD mosaic cameras – the largest in astronomy at the time – to help usher in the era of "big data" in our field. Our project accumulated 5 TB of raw images and a 200 GB database of derived data <em>before the year 2000</em>. My work involved filtering these data in real-time, searching through the lightcurves of $10^7$ stars, each with $10^3$ observations, for rare events that numbered $10^1$. The main challenge then was data storage and access, which we solved using a room-sized "mass store" carousel that included a robotic arm to retrieve data tapes. The challenges I've faced in each successive survey reflect the progress of technology through the early 21st century: understanding how to implement and use RAIDed disk arrays for high capacity redundant storage; how to distribute processes over multi-node compute clusters while maintaining input/output load balance; how to arrange data and manage memory for large retrospective analyses; how to implement algorithms to take advantage of parallel processing environments; and how to design hierarchical models that reflect structure in the data and allow for complex and insightful analyses. The structure and scale of data have always been significant challenges in my research, overcome with creativity and not a little bit of compromise in the pursuit of progress. Moore's law tends to solve practical issues of capability, but creates new ones of scale. Surmounting this requires reimagined approaches and algorithms that are scalable, tightly integrated with the compute environment, and allow for a significant level of human interaction with, and feedback between, data and model.</p>
+<p>At Bell Laboratories, I led the first astrophysical time-domain survey that detected and classified all manner of variability discovered, releasing this information to the community in real–time. This is the paradigm, writ exponentially larger, of the survey I've now spent 8 years working to bring to fruition, the Large Synoptic Survey Telescope (LSST). I have contributed directly to coding of its core algorithmic framework, to implementing novel algorithms within this framework, analyzing $10^{9.5}$ row precursor databases for quality assessment, generating interactive visualizations of our results, and illuminating the interface between the data and the science questions that will be asked of it. Our team has generated over 350k source lines of code in C++ and Python, all in an open-source environment. This project will change the world. But with LSST poised for 8 years of construction, it is prudent to step back and consider how, even with 16 years of lead time and a focus on software as a primary project risk, it might fail to live up to its full potential.</p>
+<p><strong>Future Research Direction</strong>: Our world is monitored by sensors, and our lives are awash in information generated by them. These hyper-aware devices return time-series information on heart rates, room temperatures, stock transactions, self-driving cars, and variable stars in the farthest reaches of our Galaxy. In many cases, these devices, or engines that feed off them, must make autonomous decisions based upon received or derived information: to defibrillate, turn on the air conditioning, go short, perform emergency maneuvers, or redirect the largest telescope in the world to observe a once-in-our-Galaxy's-lifetime cosmological event. The interpretation of these streams has real-world consequences, thus the need for effective and practical modeling of them is paramount. This is inarguably a problem where the 21st century's deluge of data has outstripped our abilities to parse, understand, and make informed (let alone optimal) decisions off of them.</p>
+<p>Such streams share common characteristics, in that they contain a (typically multi-variate) set of floating point numbers, include measurement noise, and are time-stamped. The data within these streams are generally correlated in time; if multi-variate, they are often correlated across channels. This opens the problem to rich families of models (autoregressive; state-based) that have historically been used for time-series analysis, with the crux being that modern information presents much higher dimensionality and rate than these algorithms have been previously faced with. Key challenges to using these models include being able to reduce the dimensionality of the problem to something intellectually intuitable and computationally tractable, generating a model that provides backcasting and forecasting abilities, and doing so with calibrated uncertainties. In practical terms this requires a marriage of well-tested time-series models with a modern understanding of statistical inference, confidence modeling and visualization, implemented with the flexibility to perform on a distributed, highly parallel compute infrastructure.</p>
+<p>I propose here the development of a probabilistic, multi-variate time-series modeling and classification engine that yields predictions in real-time using irregularly sampled and noisy data. The compute must be scalable, and tuned to operate on distributed or GPU infrastructures. The models must be flexible and hierarchical to capture uncertainties both in the data and in the models themselves. Tools will be generated to visualize and interact with the models, and services implemented to generate real-time predictions as the models evolve under the flood of data. Astronomy provides a particularly difficult use case for this class of problems, given the irregular structure of our data. Accordingly, solutions generated in this domain are likely to be broadly applicable to other types of time-series modeling, which we will make a key consideration in our work.</p>
+<p>The risk of not funding such ideas is that <strong>the process of discovery on large datasets is not guaranteed</strong>. Without this sort of innovation, gaining understanding of the structure in time-series datasets will remain beyond the reach of many domain scientists, who simply will not have the tools to undertake the requisite analyses. To make this work most accessible to them, all of our code will be developed under open source license. We will integrate and build upon extant tools (e.g. <a href="http://ipython.org/">iPython</a>) that have demonstrably altered the landscape in terms of reproducible science and collaborative coding, to foster the highest likelihood of creating an impactful project. We will operate in close collaboration with UW's <a href="http://escience.washington.edu/">eScience</a> institute to ensure that this project is undertaken in an eclectic, interdisciplinary environment. <strong>To summarize, this proposal would effectively create a center focused on time domain science within the broader UW eScience ecosystem</strong>, which includes a data science environment supported by the Moore and Sloan Foundations. This idea speaks directly to the DDD Initiative in that its advances will be cross-disciplinary and have immediate real-world applicability to extant and future data sets.</p></div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">Andrew Becker</span>
+  </span>
+<time datetime="2014-02-24T12:50:00" pubdate>2014-02-24</time></p><div class="sharing">
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://acbecker.github.io/blog/2014/02/24/ddd/" data-via="the__fog" data-counturl="http://acbecker.github.io/blog/2014/02/24/ddd/" >Tweet</a>
+  <div class="g-plusone" data-size="medium"></div>
+</div>    </footer>
+  </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div>
+  </section>
+</div>
 <aside class="sidebar">
   <section>
     <h1>Recent Posts</h1>
@@ -1920,6 +1982,9 @@ init_mathjax();
 </script>
 	<script type="text/javascript">
 	  var disqus_shortname = 'acbeckerblog';
+          var disqus_identifier = '/blog/2014/02/24/ddd/';
+          var disqus_url = 'http://acbecker.github.io/blog/2014/02/24/ddd/';
+          var disqus_title = 'Data Driven Discovery';
 	  (function() {
 	    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
 	    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';
