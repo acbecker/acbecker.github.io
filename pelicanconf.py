@@ -100,7 +100,8 @@ if not os.path.exists('_nb_header.html'):
 else:
     EXTRA_HEADER_1 = open('_nb_header.html').read().decode('utf-8')
     EXTRA_HEADER_2 = open('_table_header.html').read().decode('utf-8')
-    EXTRA_HEADER = EXTRA_HEADER_1 + EXTRA_HEADER_2
+    EXTRA_HEADER_3 = open('_fontawesome_header.html').read().decode('utf-8')
+    EXTRA_HEADER = EXTRA_HEADER_1 + EXTRA_HEADER_2 + EXTRA_HEADER_3
 
 # Trying to get the Category panel off the RHS, no effect.
 CATEGORY_SAVE_AS = False
