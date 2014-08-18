@@ -3,3 +3,4 @@
 *.pyc
 output/
 configuration/
+.ipynb_checkpoints
