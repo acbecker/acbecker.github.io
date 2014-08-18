@@ -37,9 +37,8 @@ the exchange of ideas, and the generation of new ones.  I have
 [friends](http://about.wise.io/company/)
 [who](http://tangledfields.com/) [are](https://github.com/jakevdp)
 absolutely lighting things up in new and different ways using these
-new platforms.  Leading, being in the world, and making me wish I had
-at least some part of their lives.  Nice work!  Inspiration
-accomplished.
+new platforms.  Leading, being in the world, all in all nice work!
+Inspiration accomplished.
 
 Writing the code to make the future happen is not enough; you have to
 represent it.  Which is what I intend to do here as best I can.
