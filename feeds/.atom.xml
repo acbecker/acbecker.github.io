@@ -1,5 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>Put Yourself Out There</title><link href="http://acbecker.github.io/" rel="alternate"></link><link href="/feeds/.atom.xml" rel="self"></link><id>http://acbecker.github.io/</id><updated>2014-02-24T12:50:00-08:00</updated><entry><title>Data Driven Discovery</title><link href="http://acbecker.github.io/blog/2014/02/24/ddd/" rel="alternate"></link><updated>2014-02-24T12:50:00-08:00</updated><author><name>Andrew Becker</name></author><id>tag:acbecker.github.io,2014-02-24:blog/2014/02/24/ddd/</id><summary type="html">&lt;hr /&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>Put Yourself Out There</title><link href="http://acbecker.github.io/" rel="alternate"></link><link href="/feeds/.atom.xml" rel="self"></link><id>http://acbecker.github.io/</id><updated>2014-10-14T18:41:00-07:00</updated><entry><title>Postgres Table Design</title><link href="http://acbecker.github.io/blog/2014/10/14/psql/" rel="alternate"></link><updated>2014-10-14T18:41:00-07:00</updated><author><name>Andrew Becker</name></author><id>tag:acbecker.github.io,2014-10-14:blog/2014/10/14/psql/</id><summary type="html">&lt;hr /&gt;
+
+
+&lt;p&gt;Today I worked with Dan Halperin and Brandon Holt on Postgres table
+design for our &lt;a href="https://github.com/uwescience/kbmod"&gt;KBMOD&lt;/a&gt; project.
+We are using the &lt;a href="http://postgis.net/"&gt;PostGIS&lt;/a&gt; package to provide
+support for spatial overlap queries (on the celestial sphere instead
+of the terrestrial one).  The big challenge is how to optimally store
+(and to query) information on 1e6 images that contain a total of 1e12
+pixels.  The ultimate goal is to intersect these data with proposed
+orbits of Solar System objects to understand if there is evidence for
+them in the time series of images.&lt;/p&gt;
+
+
+&lt;p&gt;We worked towards comparing two table designs.  The first on allows us
+to intersect an orbit trajectory with a given image, which acts as a sort
+of coarse database index, allowing us to only take a detailed look at the
+pixels within the images that intersect the orbit:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;-- IMAGES table:&lt;/span&gt;
+&lt;span class="k"&gt;CREATE&lt;/span&gt; &lt;span class="k"&gt;TABLE&lt;/span&gt; &lt;span class="n"&gt;fields&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; 
+    &lt;span class="n"&gt;fieldId&lt;/span&gt; &lt;span class="nb"&gt;BIGINT&lt;/span&gt; &lt;span class="k"&gt;PRIMARY&lt;/span&gt; &lt;span class="k"&gt;KEY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;run&lt;/span&gt; &lt;span class="nb"&gt;INTEGER&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;camcol&lt;/span&gt; &lt;span class="nb"&gt;SMALLINT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;field&lt;/span&gt; &lt;span class="nb"&gt;INTEGER&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;filter&lt;/span&gt; &lt;span class="nb"&gt;VARCHAR&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="n"&gt;bbox&lt;/span&gt; &lt;span class="n"&gt;GEOMETRY&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;POLYGON&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3786&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="n"&gt;tmid&lt;/span&gt; &lt;span class="k"&gt;TIMESTAMP&lt;/span&gt; &lt;span class="k"&gt;WITH&lt;/span&gt; &lt;span class="n"&gt;TIME&lt;/span&gt; &lt;span class="k"&gt;ZONE&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;trange&lt;/span&gt; &lt;span class="n"&gt;TSTZRANGE&lt;/span&gt;
+  &lt;span class="p"&gt;);&lt;/span&gt;
+
+
+&lt;span class="c1"&gt;-- PIXELS table:&lt;/span&gt;
+&lt;span class="k"&gt;CREATE&lt;/span&gt; &lt;span class="k"&gt;TABLE&lt;/span&gt; &lt;span class="n"&gt;pixels&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; 
+    &lt;span class="n"&gt;pixelId&lt;/span&gt; &lt;span class="n"&gt;BIGSERIAL&lt;/span&gt; &lt;span class="k"&gt;PRIMARY&lt;/span&gt; &lt;span class="k"&gt;KEY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;fieldId&lt;/span&gt; &lt;span class="nb"&gt;BIGINT&lt;/span&gt; &lt;span class="k"&gt;REFERENCES&lt;/span&gt; &lt;span class="n"&gt;fields&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fieldId&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="n"&gt;ra&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;decl&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;fval&lt;/span&gt; &lt;span class="nb"&gt;REAL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;radec&lt;/span&gt; &lt;span class="n"&gt;GEOMETRY&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;POINT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3786&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="n"&gt;mask&lt;/span&gt; &lt;span class="nb"&gt;INTEGER&lt;/span&gt;
+  &lt;span class="p"&gt;);&lt;/span&gt;
+
+
+&lt;span class="c1"&gt;-- EXAMPLE QUERY:&lt;/span&gt;
+&lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pixelId&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;ra&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;decl&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fval&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ST_DISTANCE&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;traj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;radec&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;AS&lt;/span&gt; &lt;span class="n"&gt;dist&lt;/span&gt; &lt;span class="k"&gt;FROM&lt;/span&gt;
+  &lt;span class="n"&gt;ST_SetSRID&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_MakePoint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;42&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;8471955&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;7336945&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;&lt;span class="mi"&gt;3786&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;traj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;pixels&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;fields&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="k"&gt;WHERE&lt;/span&gt;
+  &lt;span class="k"&gt;TIMESTAMP&lt;/span&gt; &lt;span class="k"&gt;WITH&lt;/span&gt; &lt;span class="n"&gt;TIME&lt;/span&gt; &lt;span class="k"&gt;ZONE&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;2006-10-21 03:11:44.69136z&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;@&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;trange&lt;/span&gt;
+&lt;span class="k"&gt;AND&lt;/span&gt;
+  &lt;span class="n"&gt;ST_INTERSECTS&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;traj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bbox&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;AND&lt;/span&gt;
+ &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fieldId&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fieldId&lt;/span&gt;
+&lt;span class="k"&gt;ORDER&lt;/span&gt; &lt;span class="k"&gt;BY&lt;/span&gt; &lt;span class="n"&gt;dist&lt;/span&gt;
+&lt;span class="k"&gt;LIMIT&lt;/span&gt; &lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;A second way us to use a real database index to tell us which pixels
+to look at.  I.e. intersect each trajectory with the pixels table, as
+below.  We think that first intersecting with the fields table, and
+then intersecting with the pixels in that field, &lt;em&gt;should&lt;/em&gt; provide
+optimal performance.  If the database index is up to the task...&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span class="c1"&gt;-- PIXELS table:&lt;/span&gt;
+&lt;span class="k"&gt;CREATE&lt;/span&gt; &lt;span class="k"&gt;TABLE&lt;/span&gt; &lt;span class="n"&gt;pixels&lt;/span&gt; &lt;span class="p"&gt;(&lt;/span&gt; 
+    &lt;span class="n"&gt;pixelId&lt;/span&gt; &lt;span class="n"&gt;BIGSERIAL&lt;/span&gt; &lt;span class="k"&gt;PRIMARY&lt;/span&gt; &lt;span class="k"&gt;KEY&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;fieldId&lt;/span&gt; &lt;span class="nb"&gt;BIGINT&lt;/span&gt; &lt;span class="k"&gt;REFERENCES&lt;/span&gt; &lt;span class="n"&gt;fields&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fieldId&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="n"&gt;ll_r&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;ll_d&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;lr_r&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;lr_d&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;ur_r&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;ur_d&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;ul_r&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;ul_d&lt;/span&gt; &lt;span class="n"&gt;DOUBLE&lt;/span&gt; &lt;span class="k"&gt;PRECISION&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;bbox&lt;/span&gt; &lt;span class="n"&gt;GEOMETRY&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;POLYGON&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="mi"&gt;3786&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;
+    &lt;span class="n"&gt;flux&lt;/span&gt; &lt;span class="nb"&gt;REAL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;mask&lt;/span&gt; &lt;span class="nb"&gt;INTEGER&lt;/span&gt;
+  &lt;span class="p"&gt;);&lt;/span&gt;
+
+&lt;span class="c1"&gt;-- EXAMPLE QUERY:&lt;/span&gt;
+&lt;span class="k"&gt;SELECT&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pixelId&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ST_AsText&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_Centroid&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bbox&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;flux&lt;/span&gt; &lt;span class="k"&gt;FROM&lt;/span&gt;
+  &lt;span class="n"&gt;ST_SetSRID&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_MakePoint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;42&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;8471955&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;7336945&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;&lt;span class="mi"&gt;3786&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;traj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;pixels&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="n"&gt;fields&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;
+&lt;span class="k"&gt;WHERE&lt;/span&gt;
+  &lt;span class="k"&gt;TIMESTAMP&lt;/span&gt; &lt;span class="k"&gt;WITH&lt;/span&gt; &lt;span class="n"&gt;TIME&lt;/span&gt; &lt;span class="k"&gt;ZONE&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;2006-10-28 02:55:13.932192z&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;@&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;trange&lt;/span&gt;
+&lt;span class="k"&gt;AND&lt;/span&gt;
+  &lt;span class="n"&gt;ST_INTERSECTS&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;traj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bbox&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;AND&lt;/span&gt;
+  &lt;span class="n"&gt;ST_INTERSECTS&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;traj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bbox&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;AND&lt;/span&gt;
+  &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fieldId&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fieldId&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;
+
+&lt;span class="c1"&gt;-- EXAMPLE QUERY THAT USES A SUBQUERY TO FIRST FILTER ON FIELD&lt;/span&gt;
+&lt;span class="k"&gt;SELECT&lt;/span&gt; 
+  &lt;span class="n"&gt;ST_SetSRID&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_MakePoint&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;42&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;8471955&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="mi"&gt;7336945&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt;&lt;span class="mi"&gt;3786&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;traj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+  &lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;fieldId&lt;/span&gt; &lt;span class="k"&gt;FROM&lt;/span&gt; &lt;span class="n"&gt;fields&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;
+    &lt;span class="k"&gt;WHERE&lt;/span&gt;
+      &lt;span class="k"&gt;TIMESTAMP&lt;/span&gt; &lt;span class="k"&gt;WITH&lt;/span&gt; &lt;span class="n"&gt;TIME&lt;/span&gt; &lt;span class="k"&gt;ZONE&lt;/span&gt; &lt;span class="s1"&gt;&amp;#39;2006-10-28 02:55:13.932192z&amp;#39;&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;@&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;trange&lt;/span&gt;
+    &lt;span class="k"&gt;AND&lt;/span&gt;
+      &lt;span class="n"&gt;ST_INTERSECTS&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;traj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;f&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bbox&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+  &lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;fieldId&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
+  &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pixelId&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ST_AsText&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ST_Centroid&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bbox&lt;/span&gt;&lt;span class="p"&gt;)),&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;flux&lt;/span&gt;
+&lt;span class="k"&gt;FROM&lt;/span&gt; 
+  &lt;span class="n"&gt;pixels&lt;/span&gt; &lt;span class="k"&gt;as&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;
+&lt;span class="k"&gt;WHERE&lt;/span&gt;
+  &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;fieldId&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;fieldId&lt;/span&gt;
+&lt;span class="k"&gt;AND&lt;/span&gt;
+  &lt;span class="n"&gt;ST_INTERSECTS&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;traj&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;p&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;bbox&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Note that we use a subquery in the second example, which should force
+the database to restrict the scan over pixels to those that land in
+the fields that overlap the trajcetory.&lt;/p&gt;
+&lt;p&gt;My goal is to generate a limited batch of data for both types of pixel
+tables (100 images of 1e6 pixels), so we can compare query
+performance.&lt;/p&gt;</summary></entry><entry><title>Data Driven Discovery</title><link href="http://acbecker.github.io/blog/2014/02/24/ddd/" rel="alternate"></link><updated>2014-02-24T12:50:00-08:00</updated><author><name>Andrew Becker</name></author><id>tag:acbecker.github.io,2014-02-24:blog/2014/02/24/ddd/</id><summary type="html">&lt;hr /&gt;
 
 
 &lt;p&gt;I've just submitted a proposal to the Moore Foundation's Data Driven

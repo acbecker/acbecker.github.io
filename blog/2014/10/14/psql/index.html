@@ -4,7 +4,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Put Yourself Out There</title>
+  <title>Postgres Table Design</title>
   <meta name="author" content="Andrew Becker">
 
   <link href="/atom.xml" type="application/atom+xml" rel="alternate"
@@ -1825,16 +1825,15 @@ init_mathjax();
 </ul></nav>
   <div id="main">
     <div id="content">
-<div class="blog-index">
-  		<article>
+<div>
+  <article class="hentry" role="article">
 <header>
-      <h1 class="entry-title">
-        <a href="http://acbecker.github.io/blog/2014/10/14/psql/">Postgres Table Design</a>
-      </h1>
+      <h1 class="entry-title">Postgres Table Design</h1>
       <p class="meta"><time datetime="2014-10-14T18:41:00" pubdate>2014-10-14</time></p>
 </header>
 
-  <div class="entry-content">
+  <div class="entry-content"><hr />
+
 
 <p>Today I worked with Dan Halperin and Brandon Holt on Postgres table
 design for our <a href="https://github.com/uwescience/kbmod">KBMOD</a> project.
@@ -1845,121 +1844,130 @@ of the terrestrial one).  The big challenge is how to optimally store
 pixels.  The ultimate goal is to intersect these data with proposed
 orbits of Solar System objects to understand if there is evidence for
 them in the time series of images.</p>
+
+
+<p>We worked towards comparing two table designs.  The first on allows us
+to intersect an orbit trajectory with a given image, which acts as a sort
+of coarse database index, allowing us to only take a detailed look at the
+pixels within the images that intersect the orbit:</p>
+<div class="highlight"><pre><span class="c1">-- IMAGES table:</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">fields</span> <span class="p">(</span> 
+    <span class="n">fieldId</span> <span class="nb">BIGINT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">run</span> <span class="nb">INTEGER</span><span class="p">,</span>
+    <span class="n">camcol</span> <span class="nb">SMALLINT</span><span class="p">,</span>
+    <span class="n">field</span> <span class="nb">INTEGER</span><span class="p">,</span>
+    <span class="n">filter</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">bbox</span> <span class="n">GEOMETRY</span><span class="p">(</span><span class="n">POLYGON</span><span class="p">,</span><span class="mi">3786</span><span class="p">),</span>
+    <span class="n">tmid</span> <span class="k">TIMESTAMP</span> <span class="k">WITH</span> <span class="n">TIME</span> <span class="k">ZONE</span><span class="p">,</span>
+    <span class="n">trange</span> <span class="n">TSTZRANGE</span>
+  <span class="p">);</span>
+
+
+<span class="c1">-- PIXELS table:</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">pixels</span> <span class="p">(</span> 
+    <span class="n">pixelId</span> <span class="n">BIGSERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">fieldId</span> <span class="nb">BIGINT</span> <span class="k">REFERENCES</span> <span class="n">fields</span><span class="p">(</span><span class="n">fieldId</span><span class="p">),</span>
+    <span class="n">ra</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">decl</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">fval</span> <span class="nb">REAL</span><span class="p">,</span>
+    <span class="n">radec</span> <span class="n">GEOMETRY</span><span class="p">(</span><span class="n">POINT</span><span class="p">,</span><span class="mi">3786</span><span class="p">),</span>
+    <span class="n">mask</span> <span class="nb">INTEGER</span>
+  <span class="p">);</span>
+
+
+<span class="c1">-- EXAMPLE QUERY:</span>
+<span class="k">SELECT</span> <span class="n">p</span><span class="p">.</span><span class="n">pixelId</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">ra</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">decl</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">fval</span><span class="p">,</span> <span class="n">ST_DISTANCE</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">radec</span><span class="p">)</span> <span class="k">AS</span> <span class="n">dist</span> <span class="k">FROM</span>
+  <span class="n">ST_SetSRID</span><span class="p">(</span><span class="n">ST_MakePoint</span><span class="p">(</span><span class="o">-</span><span class="mi">42</span><span class="p">.</span><span class="mi">8471955</span><span class="p">,</span> <span class="mi">0</span><span class="p">.</span><span class="mi">7336945</span><span class="p">),</span><span class="mi">3786</span><span class="p">)</span> <span class="k">as</span> <span class="n">traj</span><span class="p">,</span>
+  <span class="n">pixels</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span>
+  <span class="n">fields</span> <span class="k">as</span> <span class="n">f</span>
+<span class="k">WHERE</span>
+  <span class="k">TIMESTAMP</span> <span class="k">WITH</span> <span class="n">TIME</span> <span class="k">ZONE</span> <span class="s1">&#39;2006-10-21 03:11:44.69136z&#39;</span> <span class="o">&lt;@</span> <span class="n">f</span><span class="p">.</span><span class="n">trange</span>
+<span class="k">AND</span>
+  <span class="n">ST_INTERSECTS</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">bbox</span><span class="p">)</span>
+<span class="k">AND</span>
+ <span class="n">f</span><span class="p">.</span><span class="n">fieldId</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">fieldId</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">dist</span>
+<span class="k">LIMIT</span> <span class="mi">10</span><span class="p">;</span>
+</pre></div>
+
+
+<p>A second way us to use a real database index to tell us which pixels
+to look at.  I.e. intersect each trajectory with the pixels table, as
+below.  We think that first intersecting with the fields table, and
+then intersecting with the pixels in that field, <em>should</em> provide
+optimal performance.  If the database index is up to the task...</p>
+<div class="highlight"><pre><span class="c1">-- PIXELS table:</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">pixels</span> <span class="p">(</span> 
+    <span class="n">pixelId</span> <span class="n">BIGSERIAL</span> <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">,</span>
+    <span class="n">fieldId</span> <span class="nb">BIGINT</span> <span class="k">REFERENCES</span> <span class="n">fields</span><span class="p">(</span><span class="n">fieldId</span><span class="p">),</span>
+    <span class="n">ll_r</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">ll_d</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">lr_r</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">lr_d</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">ur_r</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">ur_d</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">ul_r</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">ul_d</span> <span class="n">DOUBLE</span> <span class="k">PRECISION</span><span class="p">,</span>
+    <span class="n">bbox</span> <span class="n">GEOMETRY</span><span class="p">(</span><span class="n">POLYGON</span><span class="p">,</span><span class="mi">3786</span><span class="p">),</span>
+    <span class="n">flux</span> <span class="nb">REAL</span><span class="p">,</span>
+    <span class="n">mask</span> <span class="nb">INTEGER</span>
+  <span class="p">);</span>
+
+<span class="c1">-- EXAMPLE QUERY:</span>
+<span class="k">SELECT</span> <span class="n">p</span><span class="p">.</span><span class="n">pixelId</span><span class="p">,</span> <span class="n">ST_AsText</span><span class="p">(</span><span class="n">ST_Centroid</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">bbox</span><span class="p">)),</span> <span class="n">p</span><span class="p">.</span><span class="n">flux</span> <span class="k">FROM</span>
+  <span class="n">ST_SetSRID</span><span class="p">(</span><span class="n">ST_MakePoint</span><span class="p">(</span><span class="o">-</span><span class="mi">42</span><span class="p">.</span><span class="mi">8471955</span><span class="p">,</span> <span class="mi">0</span><span class="p">.</span><span class="mi">7336945</span><span class="p">),</span><span class="mi">3786</span><span class="p">)</span> <span class="k">as</span> <span class="n">traj</span><span class="p">,</span>
+  <span class="n">pixels</span> <span class="k">as</span> <span class="n">p</span><span class="p">,</span>
+  <span class="n">fields</span> <span class="k">as</span> <span class="n">f</span>
+<span class="k">WHERE</span>
+  <span class="k">TIMESTAMP</span> <span class="k">WITH</span> <span class="n">TIME</span> <span class="k">ZONE</span> <span class="s1">&#39;2006-10-28 02:55:13.932192z&#39;</span> <span class="o">&lt;@</span> <span class="n">f</span><span class="p">.</span><span class="n">trange</span>
+<span class="k">AND</span>
+  <span class="n">ST_INTERSECTS</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">bbox</span><span class="p">)</span>
+<span class="k">AND</span>
+  <span class="n">ST_INTERSECTS</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">bbox</span><span class="p">)</span>
+<span class="k">AND</span>
+  <span class="n">f</span><span class="p">.</span><span class="n">fieldId</span> <span class="o">=</span> <span class="n">p</span><span class="p">.</span><span class="n">fieldId</span><span class="p">;</span>
+
+<span class="c1">-- EXAMPLE QUERY THAT USES A SUBQUERY TO FIRST FILTER ON FIELD</span>
+<span class="k">SELECT</span> 
+  <span class="n">ST_SetSRID</span><span class="p">(</span><span class="n">ST_MakePoint</span><span class="p">(</span><span class="o">-</span><span class="mi">42</span><span class="p">.</span><span class="mi">8471955</span><span class="p">,</span> <span class="mi">0</span><span class="p">.</span><span class="mi">7336945</span><span class="p">),</span><span class="mi">3786</span><span class="p">)</span> <span class="k">as</span> <span class="n">traj</span><span class="p">,</span>
+  <span class="p">(</span><span class="n">fieldId</span> <span class="k">FROM</span> <span class="n">fields</span> <span class="k">as</span> <span class="n">f</span>
+    <span class="k">WHERE</span>
+      <span class="k">TIMESTAMP</span> <span class="k">WITH</span> <span class="n">TIME</span> <span class="k">ZONE</span> <span class="s1">&#39;2006-10-28 02:55:13.932192z&#39;</span> <span class="o">&lt;@</span> <span class="n">f</span><span class="p">.</span><span class="n">trange</span>
+    <span class="k">AND</span>
+      <span class="n">ST_INTERSECTS</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">f</span><span class="p">.</span><span class="n">bbox</span><span class="p">)</span>
+  <span class="p">)</span> <span class="k">as</span> <span class="n">fieldId</span><span class="p">,</span> 
+  <span class="n">p</span><span class="p">.</span><span class="n">pixelId</span><span class="p">,</span> <span class="n">ST_AsText</span><span class="p">(</span><span class="n">ST_Centroid</span><span class="p">(</span><span class="n">p</span><span class="p">.</span><span class="n">bbox</span><span class="p">)),</span> <span class="n">p</span><span class="p">.</span><span class="n">flux</span>
+<span class="k">FROM</span> 
+  <span class="n">pixels</span> <span class="k">as</span> <span class="n">p</span>
+<span class="k">WHERE</span>
+  <span class="n">p</span><span class="p">.</span><span class="n">fieldId</span> <span class="o">=</span> <span class="n">fieldId</span>
+<span class="k">AND</span>
+  <span class="n">ST_INTERSECTS</span><span class="p">(</span><span class="n">traj</span><span class="p">,</span> <span class="n">p</span><span class="p">.</span><span class="n">bbox</span><span class="p">);</span>
+</pre></div>
+
+
+<p>Note that we use a subquery in the second example, which should force
+the database to restrict the scan over pixels to those that land in
+the fields that overlap the trajcetory.</p>
+<p>My goal is to generate a limited batch of data for both types of pixel
+tables (100 images of 1e6 pixels), so we can compare query
+performance.</p></div>
+    <footer>
+<p class="meta">
+  <span class="byline author vcard">
+    Posted by <span class="fn">Andrew Becker</span>
+  </span>
+<time datetime="2014-10-14T18:41:00" pubdate>2014-10-14</time></p><div class="sharing">
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://acbecker.github.io/blog/2014/10/14/psql/" data-via="the__fog" data-counturl="http://acbecker.github.io/blog/2014/10/14/psql/" >Tweet</a>
+  <div class="g-plusone" data-size="medium"></div>
+</div>    </footer>
+  </article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript></div>
+  </section>
 </div>
-  <footer>
-    <a rel="full-article" href="http://acbecker.github.io/blog/2014/10/14/psql/">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="http://acbecker.github.io/blog/2014/02/24/ddd/">Data Driven Discovery</a>
-      </h1>
-      <p class="meta"><time datetime="2014-02-24T12:50:00" pubdate>2014-02-24</time></p>
-</header>
-
-  <div class="entry-content">
-
-<p>I've just submitted a proposal to the Moore Foundation's Data Driven
-Discovery
-<a href="http://www.moore.org/programs/science/data-driven-discovery">Initiative</a>.
-This is the first of two rounds of the proposal process.  If selected,
-I would be awarded $1.5M over 5 years, which would be my biggest
-individual grant yet.  Read on for the core proposal idea...</p>
-<script type= "text/javascript">
-    if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
-        var mathjaxscript = document.createElement('script');
-        mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
-        mathjaxscript.type = 'text/javascript';
-        mathjaxscript.src = 'https:' == document.location.protocol
-                ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
-                : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
-        mathjaxscript[(window.opera ? "innerHTML" : "text")] =
-            "MathJax.Hub.Config({" +
-            "    config: ['MMLorHTML.js']," +
-            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
-            "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
-            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
-            "    displayAlign: 'center'," +
-            "    displayIndent: '0em'," +
-            "    showMathMenu: true," +
-            "    tex2jax: { " +
-            "        inlineMath: [ ['$','$'] ], " +
-            "        displayMath: [ ['$$','$$'] ]," +
-            "        processEscapes: true," +
-            "        preview: 'TeX'," +
-            "    }, " +
-            "    'HTML-CSS': { " +
-            "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
-            "    } " +
-            "}); ";
-        (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
-    }
-</script>
-</div>
-  <footer>
-    <a rel="full-article" href="http://acbecker.github.io/blog/2014/02/24/ddd/">Read On &crarr;</a>
-  </footer>
-  		</article>
-  		<article>
-<header>
-      <h1 class="entry-title">
-        <a href="http://acbecker.github.io/blog/2014/02/10/ncaa/">Odds of Correctly Predicting the NCAA Basketball Tournament</a>
-      </h1>
-      <p class="meta"><time datetime="2014-02-10T10:58:00" pubdate>2014-02-10</time></p>
-</header>
-
-  <div class="entry-content">
-
-<p>I was briefly interviewed for a 
-<a href="http://online.wsj.com/news/articles/SB10001424052702304450904579367153999135482?mod=Business_newsreel_3">Wall Street Journal</a>
-article on Warren Buffett's insuring of a $\$1$ billion dollar prize for
-any contestant who correctly picks all 63 games in the 2013 NCAA
-basketball tournament (see also
-<a href="http://www.marketwatch.com/story/yahoo-warren-buffett-and-a-1-billion-contest-2014-02-09-194491044">here</a>).  Don't ask
-how this happened; it involves consorting with a bunch of degenerates.  As stated in the 
-article, "Mr. Buffett's Berkshire Hathaway would take on the risk, and earn a fee for doing so".  My position
-as stated in the article is that this paid premium to Berkshire Hathaway was unnecessary, since the odds of picking the outcome of these 63 games
-correctly is so unlikely.  A great deal for Mr. Buffett, but that is indeed his reputation.  I expand on these thoughts below.
-<script type= "text/javascript">
-    if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
-        var mathjaxscript = document.createElement('script');
-        mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
-        mathjaxscript.type = 'text/javascript';
-        mathjaxscript.src = 'https:' == document.location.protocol
-                ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
-                : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
-        mathjaxscript[(window.opera ? "innerHTML" : "text")] =
-            "MathJax.Hub.Config({" +
-            "    config: ['MMLorHTML.js']," +
-            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
-            "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
-            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
-            "    displayAlign: 'center'," +
-            "    displayIndent: '0em'," +
-            "    showMathMenu: true," +
-            "    tex2jax: { " +
-            "        inlineMath: [ ['$','$'] ], " +
-            "        displayMath: [ ['$$','$$'] ]," +
-            "        processEscapes: true," +
-            "        preview: 'TeX'," +
-            "    }, " +
-            "    'HTML-CSS': { " +
-            "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
-            "    } " +
-            "}); ";
-        (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
-    }
-</script>
-</div>
-  <footer>
-    <a rel="full-article" href="http://acbecker.github.io/blog/2014/02/10/ncaa/">Read On &crarr;</a>
-  </footer>
-  		</article>
-<div class="pagination">
-
-  <br />
-</div></div>
 <aside class="sidebar">
   <section>
     <h1>Recent Posts</h1>
@@ -2028,6 +2036,9 @@ correctly is so unlikely.  A great deal for Mr. Buffett, but that is indeed his 
 </script>
 	<script type="text/javascript">
 	  var disqus_shortname = 'acbeckerblog';
+          var disqus_identifier = '/blog/2014/10/14/psql/';
+          var disqus_url = 'http://acbecker.github.io/blog/2014/10/14/psql/';
+          var disqus_title = 'Postgres Table Design';
 	  (function() {
 	    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
 	    dsq.src = 'http://' + disqus_shortname + '.disqus.com/embed.js';

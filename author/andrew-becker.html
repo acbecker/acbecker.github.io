@@ -1829,6 +1829,30 @@ init_mathjax();
   		<article>
 <header>
       <h1 class="entry-title">
+        <a href="http://acbecker.github.io/blog/2014/10/14/psql/">Postgres Table Design</a>
+      </h1>
+      <p class="meta"><time datetime="2014-10-14T18:41:00" pubdate>2014-10-14</time></p>
+</header>
+
+  <div class="entry-content">
+
+<p>Today I worked with Dan Halperin and Brandon Holt on Postgres table
+design for our <a href="https://github.com/uwescience/kbmod">KBMOD</a> project.
+We are using the <a href="http://postgis.net/">PostGIS</a> package to provide
+support for spatial overlap queries (on the celestial sphere instead
+of the terrestrial one).  The big challenge is how to optimally store
+(and to query) information on 1e6 images that contain a total of 1e12
+pixels.  The ultimate goal is to intersect these data with proposed
+orbits of Solar System objects to understand if there is evidence for
+them in the time series of images.</p>
+</div>
+  <footer>
+    <a rel="full-article" href="http://acbecker.github.io/blog/2014/10/14/psql/">Read On &crarr;</a>
+  </footer>
+  		</article>
+  		<article>
+<header>
+      <h1 class="entry-title">
         <a href="http://acbecker.github.io/blog/2014/02/24/ddd/">Data Driven Discovery</a>
       </h1>
       <p class="meta"><time datetime="2014-02-24T12:50:00" pubdate>2014-02-24</time></p>
@@ -1940,6 +1964,9 @@ correctly is so unlikely.  A great deal for Mr. Buffett, but that is indeed his 
   <section>
     <h1>Recent Posts</h1>
     <ul id="recent_posts">
+      <li class="post">
+          <a href="http://acbecker.github.io/blog/2014/10/14/psql/">Postgres Table Design</a>
+      </li>
       <li class="post">
           <a href="http://acbecker.github.io/blog/2014/02/24/ddd/">Data Driven Discovery</a>
       </li>
